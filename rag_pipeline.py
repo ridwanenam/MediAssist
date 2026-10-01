@@ -145,8 +145,41 @@ class MedicalRAGPipeline:
 
     def build_prompt(self, query: str, context: str) -> List[Dict[str, str]]:
         """
-        Creates a system and user prompt with Context and Query variables.
+        Creates a system and user prompt with Context and Query variables,
+        dynamically enforcing the response language based on user query.
         """
+        id_words = [
+            "apakah", "bagaimana", "mengapa", "kenapa", "apa", "berapa", "dan", "yang",
+            "pada", "untuk", "dengan", "atau", "adalah", "efek", "pasien", "puasa", "bisa", "aman"
+        ]
+        q_lower = f" {query.lower().strip()} "
+        is_indonesian = any(f" {w} " in q_lower for w in id_words)
+
+        if is_indonesian:
+            lang_instruction = (
+                "INSTRUKSI BAHASA WAJIB:\n"
+                "Pengguna mengajukan pertanyaan dalam BAHASA INDONESIA. "
+                "Kamu WAJIB menyusun seluruh jawaban, analisis, dan ringkasan klinis dalam BAHASA INDONESIA yang profesional dan terstruktur.\n"
+                "Gunakan struktur bagian berikut:\n"
+                "- Temuan Klinis Utama\n"
+                "- Bukti Ilmiah & Mekanisme\n"
+                "- Pertimbangan Praktis / Keterbatasan\n"
+                "Tetap pertahankan istilah medis (seperti HbA1c, HOMA-IR, Intermittent Fasting) dan sitasi [PMID: xxxxx] dengan tepat."
+            )
+            user_trailer = (
+                "Jawablah pertanyaan di atas secara komprehensif, berbasis bukti, dan SELURUHNYA DALAM BAHASA INDONESIA "
+                "menggunakan dokumen konteks yang tersedia."
+            )
+        else:
+            lang_instruction = (
+                "Language Guideline:\n"
+                "Respond in clear, professional English. Organize into clear sections: "
+                "Key Clinical Findings, Scientific Evidence & Mechanisms, and Practical Considerations / Limitations."
+            )
+            user_trailer = (
+                "Please provide a comprehensive, evidence-based clinical answer using the context provided above."
+            )
+
         system_instruction = (
             "You are MediAssist AI, an advanced clinical intelligence assistant developed for "
             "MediInsight Health Solutions. Your purpose is to assist healthcare practitioners, "
@@ -156,18 +189,15 @@ class MedicalRAGPipeline:
             "1. Ground your synthesis strictly in the provided Context documents.\n"
             "2. Cite PMIDs and study titles directly when presenting clinical findings (e.g. '[PMID: 12345678]').\n"
             "3. If the context does not contain sufficient clinical evidence to answer a point, explicitly state: "
-            "'Based on the retrieved studies, insufficient data is available.' Do not speculate or invent medical facts.\n"
-            "4. Organize your response into clear sections: Key Clinical Findings, Scientific Evidence & Mechanisms, "
-            "and Practical Considerations / Limitations.\n"
-            "5. Language Flexibility: Always respond in the same language as the user's query. "
-            "If the user asks in Indonesian (Bahasa Indonesia), provide the complete clinical synthesis and explanations in professional Indonesian, "
-            "while keeping medical terminology, study titles, and PMIDs accurate."
+            "'Based on the retrieved studies, insufficient data is available.' (atau 'Berdasarkan studi yang ditemukan, data belum mencukupi.'). "
+            "Do not speculate or invent medical facts.\n"
+            f"4. {lang_instruction}"
         )
 
         user_content = (
             f"Context:\n{context}\n\n"
             f"Query:\n{query}\n\n"
-            "Please provide an evidence-based clinical answer using the context provided above."
+            f"{user_trailer}"
         )
 
         return [

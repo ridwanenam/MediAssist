@@ -10,9 +10,6 @@ venv/
 .venv/
 env/
 
-# Database and local vector data
-data/
-*.sqlite3
 
 # IDE and OS files
 .vscode/

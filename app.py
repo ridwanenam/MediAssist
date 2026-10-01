@@ -142,16 +142,15 @@ def main():
             else:
                 with st.status("Fetching and ingesting PubMed articles...", expanded=True) as status_box:
                     try:
-                        retriever = PubMedRetriever()
                         st.write("Searching PubMed ID records via NCBI Entrez API...")
-                        pmids = retriever.search_articles(query=search_query.strip(), max_results=max_articles)
+                        pmids = PubMedRetriever.search_pubmed_articles(search_term=search_query.strip(), max_results=max_articles)
 
                         if not pmids:
                             st.warning(f"No PubMed articles found for query: '{search_query}'.")
                             status_box.update(label="No articles found", state="error")
                         else:
                             st.write(f"Retrieved {len(pmids)} PMIDs. Fetching complete abstracts and metadata...")
-                            articles = retriever.fetch_article_details(pmids)
+                            articles = PubMedRetriever.fetch_pubmed_abstracts(pmids)
 
                             st.write(f"Embedding and storing {len(articles)} articles into ChromaDB...")
                             chroma_manager.add_articles_to_collection(articles)
@@ -162,7 +161,7 @@ def main():
                             time.sleep(1)
                             st.rerun()
                     except Exception as ex:
-                        status_box.update(label="Ingestion failed", state="error")
+                        status_box.update(label=f"Ingestion failed: {str(ex)}", state="error")
                         st.error(f"Error during ingestion: {str(ex)}")
 
         st.markdown("---")

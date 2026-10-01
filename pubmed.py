@@ -81,3 +81,8 @@ class PubMedRetriever:
                     "publication_date": pub_date
                 })
         return abstracts
+
+    # Aliases for flexible method invocation
+    search_articles = search_pubmed_articles
+    fetch_article_details = fetch_pubmed_abstracts
+
