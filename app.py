@@ -22,45 +22,52 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #38bdf8;
         margin-bottom: 0.25rem;
     }
     .sub-header {
-        font-size: 1rem;
-        color: #64748b;
+        font-size: 1.05rem;
+        color: #cbd5e1;
         margin-bottom: 1.5rem;
     }
     .metric-card {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background-color: rgba(56, 189, 248, 0.08);
+        border: 1px solid rgba(56, 189, 248, 0.25);
         border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
     }
     .source-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-left: 4px solid #0284c7;
+        background-color: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-left: 4px solid #38bdf8;
         border-radius: 6px;
-        padding: 12px;
-        margin-bottom: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
     }
     .source-title {
         font-size: 0.95rem;
         font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 4px;
+        color: #f1f5f9;
+        margin-bottom: 6px;
+    }
+    .source-title a {
+        color: #38bdf8;
+        text-decoration: none;
+    }
+    .source-title a:hover {
+        text-decoration: underline;
     }
     .source-meta {
         font-size: 0.8rem;
-        color: #64748b;
+        color: #94a3b8;
         margin-bottom: 6px;
     }
     .source-abstract {
         font-size: 0.85rem;
-        color: #334155;
+        color: #cbd5e1;
         line-height: 1.4;
     }
 </style>
@@ -103,9 +110,9 @@ def main():
 
         st.markdown(f"""
         <div class="metric-card">
-            <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600;">Indexed Articles</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: #0284c7;">{current_doc_count} Documents</div>
-            <div style="font-size: 0.75rem; color: #64748b;">Collection: {chroma_manager.collection.name}</div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Indexed Articles</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #38bdf8;">{current_doc_count} Documents</div>
+            <div style="font-size: 0.75rem; color: #94a3b8;">Collection: {chroma_manager.collection.name}</div>
         </div>
         """, unsafe_allow_html=True)
 

@@ -158,7 +158,10 @@ class MedicalRAGPipeline:
             "3. If the context does not contain sufficient clinical evidence to answer a point, explicitly state: "
             "'Based on the retrieved studies, insufficient data is available.' Do not speculate or invent medical facts.\n"
             "4. Organize your response into clear sections: Key Clinical Findings, Scientific Evidence & Mechanisms, "
-            "and Practical Considerations / Limitations."
+            "and Practical Considerations / Limitations.\n"
+            "5. Language Flexibility: Always respond in the same language as the user's query. "
+            "If the user asks in Indonesian (Bahasa Indonesia), provide the complete clinical synthesis and explanations in professional Indonesian, "
+            "while keeping medical terminology, study titles, and PMIDs accurate."
         )
 
         user_content = (
