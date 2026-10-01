@@ -81,7 +81,8 @@ def get_rag_pipeline() -> MedicalRAGPipeline:
 @st.cache_resource
 def get_chroma_manager() -> ChromaCollectionManager:
     """Initialize and cache the ChromaCollectionManager instance."""
-    return ChromaCollectionManager()
+    persist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "chroma_db")
+    return ChromaCollectionManager(persist_directory=persist_dir)
 
 def main():
     # Initialize session states
@@ -96,10 +97,14 @@ def main():
         chroma_manager = get_chroma_manager()
     except Exception as e:
         st.error(f"Initialization error: {str(e)}")
-        st.info("Please verify that your GROQ_API_KEY is configured in MediAssist-AI/.env.")
+        st.info("Please verify that your GROQ_API_KEY is configured in MediAssist-AI/.env or Streamlit Secrets.")
         st.stop()
 
-    current_doc_count = chroma_manager.collection.count()
+    # Re-fetch count dynamically
+    try:
+        current_doc_count = chroma_manager.collection.count()
+    except Exception:
+        current_doc_count = 0
 
     # ---------------------------------------------------------
     # SIDEBAR: PubMed Article Search & Knowledge Ingestion
@@ -115,6 +120,10 @@ def main():
             <div style="font-size: 0.75rem; color: #94a3b8;">Collection: {chroma_manager.collection.name}</div>
         </div>
         """, unsafe_allow_html=True)
+
+        if st.button("Reload Knowledge Base Cache", use_container_width=True):
+            st.cache_resource.clear()
+            st.rerun()
 
         st.markdown("---")
         st.write("**Search and Ingest New Articles**")
@@ -158,6 +167,7 @@ def main():
                             new_count = chroma_manager.collection.count()
                             status_box.update(label=f"Ingestion Complete: {len(articles)} articles processed.", state="complete")
                             st.success(f"Vector store updated. Total articles now indexed: {new_count}")
+                            st.cache_resource.clear()
                             time.sleep(1)
                             st.rerun()
                     except Exception as ex:

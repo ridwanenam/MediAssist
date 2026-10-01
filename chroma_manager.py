@@ -8,8 +8,13 @@ class ChromaCollectionManager:
     Manager module for ChromaDB vector collections.
     Handles ingestion of PubMed medical research articles and semantic similarity retrieval.
     """
-    def __init__(self, persist_directory: str = "./data/chroma_db", collection_name: str = "mediassist_pubmed_if"):
-        self.persist_directory = persist_directory
+    def __init__(self, persist_directory: Optional[str] = None, collection_name: str = "mediassist_pubmed_if"):
+        if persist_directory is None:
+            self.persist_directory = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "data", "chroma_db"
+            )
+        else:
+            self.persist_directory = persist_directory
         self.collection_name = collection_name
         
         # Ensure persistence directory exists
