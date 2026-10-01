@@ -1,0 +1,6 @@
+streamlit
+chromadb
+groq
+python-dotenv
+requests
+onnxruntime
